@@ -7,7 +7,7 @@ and mainly `packmlproject` script.
 
 ## Install `packmlproject`
 ```bash
-pip install git+https://github.com/krokrob/packmlproject.git
+pip install git+https://github.com/FelipeDS-Chili/packmlproject.git
 ```
 
 ## Create a `newpkgname` package
