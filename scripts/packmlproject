@@ -112,6 +112,6 @@ if __name__ == '__main__':
 
 
 
-    print( colored('############## 🔥🔥Lets make your own ML project 🔥🔥 ##############)' , 'green' )
-    print( colored('############## Developed by Felipe Inostroza 🖥 ##############)' , 'yellow' )
-    print( colored('############## Base on LeWagon package ##############)' , 'blue' )
+    print( colored('############## 🔥🔥Lets make your own ML project 🔥🔥 ##############', 'green' ))
+    print( colored('############## Developed by Felipe Inostroza 🖥 ##############' , 'yellow' ))
+    print( colored('############## Base on LeWagon package ##############', 'blue' ))
