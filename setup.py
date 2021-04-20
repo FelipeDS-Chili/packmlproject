@@ -21,10 +21,14 @@ setup(name='packmlproject',
       long_description=README,
       long_description_content_type="text/markdown",
       url="https://github.com/FelipeDS-Chili/packmlproject",
-      author='Felipe', author_email="falberto",
+      author='Felipe', author_email="falberto.inostroza@gmail.com",
       packages=find_packages(),
       test_suite='tests',
       # include_package_data: to install data from MANIFEST.in
       include_package_data=True,
       scripts=['scripts/packmlproject'],
       zip_safe=False)
+
+print( colored('############## 🔥🔥Lets make your own ML project 🔥🔥 ##############', 'green' ))
+print( colored('############## Developed by Felipe Inostroza 🖥 ##############' , 'yellow' ))
+print( colored('############## Base on LeWagon package ##############', 'blue' ))
