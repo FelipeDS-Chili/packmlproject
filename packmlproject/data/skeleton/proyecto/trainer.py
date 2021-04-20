@@ -36,9 +36,9 @@ from google.cloud import storage
 
 
 
-MLFLOW_URI = "https://mlflow.lewagon.co/"
+MLFLOW_URI = "https://mlflow.server.co/"
 
-BUCKET_NAME = 'wagon-ml-felipeinostrozarios-21'
+BUCKET_NAME = 'ml-felipeinostroza-21'
 
 BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
 

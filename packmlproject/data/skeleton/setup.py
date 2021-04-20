@@ -7,7 +7,7 @@ requirements = [x.strip() for x in content if 'git+' not in x]
 
 setup(name='proyecto',
       version="1.0",
-      description="proyecto Description",
+      description="Proyecto Description",
       packages=find_packages(),
       install_requires=requirements,
       test_suite='tests',

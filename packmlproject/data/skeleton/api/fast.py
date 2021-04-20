@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import joblib
 import json
 import pandas as pd
-from proj.data import get_data, clean_df, DIST_ARGS
+from proyecto.data import get_data, clean_df, DIST_ARGS
 import numpy as np
 
 
