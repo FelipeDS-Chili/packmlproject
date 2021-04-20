@@ -3,8 +3,8 @@ from sklearn.pipeline import Pipeline
 import pandas as pd
 import numpy as np
 
-from proj.data import get_data, clean_df, DIST_ARGS
-from proj.utils import haversine_vectorized, minkowski_distance
+from data import get_data, clean_df, DIST_ARGS
+from utils import haversine_vectorized, minkowski_distance
 import pygeohash as gh
 
 # Scalers para FECHA--> transformación a seno y coseno (CosSinMesHoraMinuto, CosSinDiaSemana)

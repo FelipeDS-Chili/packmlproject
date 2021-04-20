@@ -33,7 +33,7 @@ BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
 ##### Model - - - - - - - - - - - - - - - - - - - - - - - -
 
 # model folder name (will contain the folders for all trained model versions)
-MODEL_NAME = 'taxifare'
+MODEL_NAME = 'proyecto'
 
 # model version folder name (where the trained model.joblib file will be stored)
 MODEL_VERSION = 'v1'
@@ -103,8 +103,8 @@ def clean_df(df, test=False):
 
 if __name__ == '__main__':
     # For introspections purpose to quickly get this functions on ipython
-    import proj
-    folder_source, _ = split(proj.__file__)
+    import proyecto
+    folder_source, _ = split(proyecto.__file__)
     df = pd.read_csv('{}/data/data.csv.gz'.format(folder_source))
     clean_data = clean_data(df)
     print(' dataframe cleaned')

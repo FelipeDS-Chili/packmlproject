@@ -42,17 +42,17 @@ BUCKET_NAME = 'wagon-ml-felipeinostrozarios-21'
 
 BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
 
-MODEL_NAME = 'project'
+MODEL_NAME = 'proyecto'
 
 MODEL_VERSION = 'v1'
 
-STORAGE_LOCATION = 'models/project/model.joblib'
+STORAGE_LOCATION = 'models/proyecto/model.joblib'
 
 
 
 class Trainer(object):
     ESTIMATOR = "LogisticRegression"
-    EXPERIMENT_NAME = "Invesscience_batch_#463"
+    EXPERIMENT_NAME = "proyecto"
     IMPUTER = 'SimpleImputer'
     SCALER_AMOUNT = 'RobustScaler'
     SCALER_PROFESSIONALS = 'MinMaxScaler'
@@ -93,28 +93,28 @@ class Trainer(object):
         self.nrows = self.X_train.shape[0]  # nb of rows to train on
         self.log_kwargs_params()
         self.log_machine_specs()
-        
-        
+
+
 
     def get_estimator(self):
         estimator = self.kwargs.get("estimator", self.ESTIMATOR)
-        
+
         if estimator == "LogisticRegression":
             model = LogisticRegression(class_weight= 'balanced')
-        
+
         elif estimator == "SVC":
             model = SVC(class_weight='balanced')
-        
+
         elif estimator == "KNeighborsClassifier":
             model = KNeighborsClassifier()
-        
+
         elif estimator == "DecisionTree":
             model = DecisionTreeClassifier(class_weight ='balanced')
 
 
         elif estimator == "RandomForestClassifier":
             model = RandomForestClassifier()
-            
+
 
         elif estimator == "xgboost":
 
@@ -126,7 +126,7 @@ class Trainer(object):
 
         elif estimator == "adaboost":
             model = AdaBoostClassifier()
-            
+
         elif estimator =='SGDC':
             model = SGDClassifier(class_weight ='balanced')
 
@@ -236,10 +236,10 @@ class Trainer(object):
             scaler_use = MinMaxScaler()
 
         scaler_participant_params = self.kwargs.get("scaler_participant_params", {})
-        
+
         if self.mlflow:
             self.mlflow_log_param("scaler_participants", scaler_participants)
-            
+
         scaler_use.set_params(**scaler_participant_params)
         print(colored(scaler_use.__class__.__name__, "blue"))
 
@@ -286,7 +286,7 @@ class Trainer(object):
                             ('model_use', self.get_estimator())] )
 
 
-    
+
 
         if self.smote:
 
@@ -386,7 +386,7 @@ class Trainer(object):
     def save_model(self, upload=True, auto_remove=True):
         """Save the model into a .joblib and upload it on Google Storage /models folder
         HINTS : use sklearn.joblib (or jbolib) libraries and google-cloud-storage"""
-        
+
         joblib.dump(self.pipeline, 'model.joblib')
         print(colored("model.joblib saved locally", "green"))
         if self.upload:
@@ -485,7 +485,7 @@ if __name__ == "__main__":
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
     # Get and clean data
-    experiment = "Invesscience_batch_#463"
+    experiment = "proyecto"
 
     #Change the reference HERE !!!
 

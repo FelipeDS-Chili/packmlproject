@@ -2,7 +2,7 @@
 
 # Import from standard library
 import os
-import proj
+import proyecto
 import pandas as pd
 # Import from our data
 from proyecto.data import clean_data
@@ -10,7 +10,7 @@ import pytest
 
 
 def test_clean_data():
-    datapath = os.path.dirname(os.path.abspath(proj.__file__)) + '/data'
+    datapath = os.path.dirname(os.path.abspath(proyecto.__file__)) + '/data'
     df = pd.read_csv('{}/data.csv.gz'.format(datapath))
     first_cols = ['id', 'civility', 'birthdate', 'city', 'postal_code', 'vote_1']
     assert list(df.columns)[:6] == first_cols

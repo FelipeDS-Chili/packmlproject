@@ -1,10 +1,3 @@
-# ----------------------------------
-#          INSTALL & TEST
-# ----------------------------------
-
-
-
-
 
 # path of the file to upload to gcp (the path of the file should be absolute or should match the directory where the make command is run)
 # cambiar train_1k.csv por data verdadera
@@ -55,9 +48,15 @@ upload_data:
 run_locally:
 	@python -m ${PACKAGE_NAME}.${FILENAME}
 
-# correr el packete
+# correr el app
 run_fast:
 	@python -m api.fast
+
+run_streamlit:
+	@python -m api.streamlit
+
+run_flask:
+	@python -m api.app
 
 
 
@@ -71,6 +70,12 @@ gcp_submit_training:
 		--runtime-version=${RUNTIME_VERSION} \
 		--region ${REGION} \
 		--stream-logs
+
+# ----------------------------------
+#          INSTALL & TEST
+# ----------------------------------
+
+
 
 clean:
 	@rm -f */version.txt

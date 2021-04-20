@@ -81,6 +81,12 @@ if __name__ == '__main__':
     search_replace(pkgn, 'MANIFEST.in', 'proyecto', pkg_name)
     search_replace(pkgn, 'scripts/proyecto-process', 'proyecto', pkg_name)
     search_replace(pkgn, 'Dockerfile', 'proyecto', pkg_name)
+    search_replace(pkgn, 'proyecto/data.py', 'proyecto', pkg_name)
+    search_replace(pkgn, 'proyecto/gcp.py', 'proyecto', pkg_name)
+    search_replace(pkgn, 'proyecto/trainer.py', 'proyecto', pkg_name)
+    search_replace(pkgn, 'proyecto/gcp.py', 'proyecto', pkg_name)
+    search_replace(pkgn, 'tests/data_test.py', 'proyecto', pkg_name)
+
     os.rename('{}/proyecto'.format(pkg_name), '{}/{}'.format(pkg_name, pkg_name))
     # warning if -n proj1 -> proj11
     os.rename('{}/scripts/proyecto-process'.format(pkg_name),

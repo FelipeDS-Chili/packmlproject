@@ -11,7 +11,7 @@ def storage_upload(model_directory, bucket=BUCKET_NAME, rm=False):
 
     storage_location = '{}/{}/{}/{}'.format(
         'models',
-        'project',
+        'proyecto',
         model_directory,
         'model.joblib')
     blob = client.blob(storage_location)
