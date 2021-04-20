@@ -18,18 +18,20 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, GridSearchCV
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder, Binarizer, RobustScaler, MinMaxScaler
+from sklearn.inspection import permutation_importance
+from sklearn.naive_bayes import GaussianNB
+from sklearn.impute import KNNImputer,SimpleImputer
+
 from termcolor import colored
 from xgboost import XGBRegressor
-from utils import compute_f1, simple_time_tracker, compute_precision, get_data_filled
+from utils import compute_f1, simple_time_tracker, compute_precision, get_data
 
-from sklearn.impute import KNNImputer,SimpleImputer
 from scipy.stats import uniform, randint
 from xgboost import XGBClassifier
 from imblearn.pipeline import make_pipeline
 from imblearn.over_sampling import SMOTE, ADASYN
 from imblearn.pipeline import Pipeline as Pipeline_imb
-from sklearn.inspection import permutation_importance
-from sklearn.naive_bayes import GaussianNB
+
 from google.cloud import storage
 
 
@@ -40,11 +42,11 @@ BUCKET_NAME = 'wagon-ml-felipeinostrozarios-21'
 
 BUCKET_TRAIN_DATA_PATH = 'data/train_1k.csv'
 
-MODEL_NAME = 'taxifare'
+MODEL_NAME = 'project'
 
 MODEL_VERSION = 'v1'
 
-STORAGE_LOCATION = 'models/simpletaxifare/model_taxi.joblib'
+STORAGE_LOCATION = 'models/project/model.joblib'
 
 
 
@@ -234,7 +236,10 @@ class Trainer(object):
             scaler_use = MinMaxScaler()
 
         scaler_participant_params = self.kwargs.get("scaler_participant_params", {})
-        self.mlflow_log_param("scaler_participants", scaler_participants)
+        
+        if self.mlflow:
+            self.mlflow_log_param("scaler_participants", scaler_participants)
+            
         scaler_use.set_params(**scaler_participant_params)
         print(colored(scaler_use.__class__.__name__, "blue"))
 
@@ -329,16 +334,17 @@ class Trainer(object):
         tic = time.time()
         self.set_pipeline()
         self.pipeline.fit(self.X_train, self.y_train)
-        # mlflow logs
-        self.mlflow_log_metric("train_time", int(time.time() - tic))
-        self.set_tag('tag_instance', self.tag)
+        if self.mlflow:
+            # mlflow logs
+            self.mlflow_log_metric("train_time", int(time.time() - tic))
+            self.set_tag('tag_instance', self.tag)
 
     def evaluate(self):
         f1_train = self.compute_f1(self.X_train, self.y_train)
         precision_train = self.compute_precision(self.X_train, self.y_train)
-
-        self.mlflow_log_metric("f1score_train", f1_train)
-        self.mlflow_log_metric("precision_train", precision_train)
+        if self.mlflow:
+            self.mlflow_log_metric("f1score_train", f1_train)
+            self.mlflow_log_metric("precision_train", precision_train)
 
         if self.split:
             f1_val = self.compute_f1(self.X_val, self.y_val, show=True)
@@ -381,11 +387,11 @@ class Trainer(object):
         """Save the model into a .joblib and upload it on Google Storage /models folder
         HINTS : use sklearn.joblib (or jbolib) libraries and google-cloud-storage"""
         
-        joblib.dump(self.pipeline, 'model_taxi.joblib')
-        print(colored("model_taxi.joblib saved locally", "green"))
+        joblib.dump(self.pipeline, 'model.joblib')
+        print(colored("model.joblib saved locally", "green"))
         if self.upload:
             self.upload_model_to_gcp()
-            print(f"uploaded model_taxi.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
+            print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
 
     #  optimization of integers and floats (downcast)
     def df_optimized(self, df, verbose=True, **kwargs):

@@ -32,8 +32,8 @@ PYTHON_VERSION=3.7
 FRAMEWORK=scikit-learn
 RUNTIME_VERSION=1.15
 
-PACKAGE_NAME=invesscience
-FILENAME=mlflow
+PACKAGE_NAME=proj
+FILENAME=trainer
 
 
 JOB_NAME=taxi_fare_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
@@ -53,6 +53,12 @@ upload_data:
 
 run_locally:
 	@python -m ${PACKAGE_NAME}.${FILENAME}
+
+# correr el packete
+run_fast:
+	@python -m api.fast
+
+	
 
 #comando para entrenar modelo en GCP AI
 gcp_submit_training:

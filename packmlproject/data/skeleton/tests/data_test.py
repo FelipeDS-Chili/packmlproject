@@ -4,8 +4,8 @@
 import os
 import proj
 import pandas as pd
-# Import from our lib
-from proj.lib import clean_data
+# Import from our data
+from proj.data import clean_data
 import pytest
 
 
