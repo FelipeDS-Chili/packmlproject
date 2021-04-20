@@ -5,7 +5,7 @@ import os
 import proj
 import pandas as pd
 # Import from our data
-from proj.data import clean_data
+from proyecto.data import clean_data
 import pytest
 
 

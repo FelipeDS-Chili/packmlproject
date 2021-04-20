@@ -1,5 +1,5 @@
 # Data analysis
-- Document here the project: {proj}
+- Document here the project: {proyecto}
 - Description: {description}
 - Data Source:
 - Type of analysis:
@@ -22,15 +22,15 @@ Unittest test:
 make clean install test
 ```
 
-Check for {proj} in gitlab.com/{group}.
+Check for {proyecto} in gitlab.com/{group}.
 If your project is not set please add it:
 
-- Create a new project on `gitlab.com/{group}/{proj}`
+- Create a new project on `gitlab.com/{group}/{proyecto}`
 - Then populate it:
 
 ```bash
-##   e.g. if group is "{group}" and project_name is "{proj}"
-git remote add origin git@github.com:{group}/{proj}.git
+##   e.g. if group is "{group}" and project_name is "{proyecto}"
+git remote add origin git@github.com:{group}/{proyecto}.git
 git push -u origin master
 git push -u origin --tags
 ```
@@ -41,12 +41,12 @@ Functionnal test with a script:
 cd
 mkdir tmp
 cd tmp
-{proj}-run
+{proyecto}-run
 ```
 
 # Install
 
-Go to `https://github.com/{group}/{proj}` to see the project, manage issues,
+Go to `https://github.com/{group}/{proyecto}` to see the project, manage issues,
 setup you ssh public key, ...
 
 Create a python3 virtualenv and activate it:
@@ -59,8 +59,8 @@ deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
 Clone the project and install it:
 
 ```bash
-git clone git@github.com:{group}/{proj}.git
-cd {proj}
+git clone git@github.com:{group}/{proyecto}.git
+cd {proyecto}
 pip install -r requirements.txt
 make clean install test                # install and test
 ```
@@ -70,5 +70,5 @@ Functionnal test with a script:
 cd
 mkdir tmp
 cd tmp
-{proj}-run
+{proyecto}-run
 ```

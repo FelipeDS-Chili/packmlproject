@@ -71,18 +71,19 @@ if __name__ == '__main__':
     # search replace in skeletion files
     print('  => New python package {} created'.format(pkg_name))
     pkgn = pkg_name
-    search_replace(pkgn, 'setup.py', 'proj_description', description)
-    search_replace(pkgn, 'setup.py', "'proj'", "'{}'".format(pkg_name))
-    search_replace(pkgn, 'setup.py', "'proj/", "'{}/".format(pkg_name))
-    search_replace(pkgn, 'setup.py', 'proj-run', '{}-run'.format(pkg_name))
-    search_replace(pkgn, 'Makefile', 'proj', pkg_name)
-    search_replace(pkgn, 'README.md', '{proj}', pkg_name)
+    search_replace(pkgn, 'setup.py', 'proyecto_description', description)
+    search_replace(pkgn, 'setup.py', "'proyecto'", "'{}'".format(pkg_name))
+    search_replace(pkgn, 'setup.py', "'proyecto/", "'{}/".format(pkg_name))
+    search_replace(pkgn, 'setup.py', 'proyecto-run', '{}-run'.format(pkg_name))
+    search_replace(pkgn, 'Makefile', 'proyecto', pkg_name)
+    search_replace(pkgn, 'README.md', '{proyecto}', pkg_name)
     search_replace(pkgn, 'README.md', '{description}', description)
-    search_replace(pkgn, 'MANIFEST.in', 'proj', pkg_name)
-    search_replace(pkgn, 'scripts/proj-process', 'proj', pkg_name)
-    os.rename('{}/proj'.format(pkg_name), '{}/{}'.format(pkg_name, pkg_name))
+    search_replace(pkgn, 'MANIFEST.in', 'proyecto', pkg_name)
+    search_replace(pkgn, 'scripts/proyecto-process', 'proyecto', pkg_name)
+    search_replace(pkgn, 'Dockerfile', 'proyecto', pkg_name)
+    os.rename('{}/proyecto'.format(pkg_name), '{}/{}'.format(pkg_name, pkg_name))
     # warning if -n proj1 -> proj11
-    os.rename('{}/scripts/proj-process'.format(pkg_name),
+    os.rename('{}/scripts/proyecto-process'.format(pkg_name),
               '{}/scripts/{}-run'.format(pkg_name, pkg_name))
     # CI
     # if args.gitlab:

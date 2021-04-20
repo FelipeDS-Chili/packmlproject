@@ -8,7 +8,7 @@
 
 # path of the file to upload to gcp (the path of the file should be absolute or should match the directory where the make command is run)
 # cambiar train_1k.csv por data verdadera
-LOCAL_PATH="/Users/felipeinostroza/code/FelipeDS-Chili/proj/proj/data/train_1k.csv"
+LOCAL_PATH="/Users/felipeinostroza/code/FelipeDS-Chili/proyecto/proyecto/data/train_1k.csv"
 
 # bucket directory in which to store the uploaded file (we choose to name this data as a convention)
 BUCKET_FOLDER=data
@@ -33,11 +33,11 @@ PYTHON_VERSION=3.7
 FRAMEWORK=scikit-learn
 RUNTIME_VERSION=1.15
 
-PACKAGE_NAME=proj
+PACKAGE_NAME=proyecto
 FILENAME=trainer
 
 
-JOB_NAME=proj_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
+JOB_NAME=proyecto_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
 
 #crear project en gcp storage
 set_project:
@@ -85,10 +85,10 @@ install_requirements:
 	@pip install -r requirements.txt
 
 check_code:
-	@flake8 scripts/* proj/*.py
+	@flake8 scripts/* proyecto/*.py
 
 black:
-	@black scripts/* proj/*.py
+	@black scripts/* proyecto/*.py
 
 test:
 	@coverage run -m pytest tests/*.py
@@ -102,8 +102,8 @@ clean:
 	@rm -f .coverage
 	@rm -fr */__pycache__ */*.pyc __pycache__
 	@rm -fr build dist
-	@rm -fr proj-*.dist-info
-	@rm -fr proj.egg-info
+	@rm -fr proyecto-*.dist-info
+	@rm -fr proyecto.egg-info
 
 install:
 	@pip install . -U

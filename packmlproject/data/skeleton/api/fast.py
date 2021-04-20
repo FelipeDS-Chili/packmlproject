@@ -29,7 +29,7 @@ def index():
 @app.get("/predict_fare")
 def predict(key, pickup_datetime , pickup_longitude, pickup_latitude, dropoff_longitude, dropoff_latitude, passenger_count):
 
-    model = joblib.load('model_taxi.joblib')
+    model = joblib.load('model.joblib')
 
     X_pred = pd.DataFrame([{
                   "key": '2013-07-06 17:18:00.000000119',

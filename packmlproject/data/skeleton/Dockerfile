@@ -1,5 +1,5 @@
 FROM python:3.8.6-buster
-COPY proj /proj
+COPY proyecto /proyecto
 COPY api /api
 COPY model.joblib /model.joblib
 COPY requirements.txt /requirements.txt

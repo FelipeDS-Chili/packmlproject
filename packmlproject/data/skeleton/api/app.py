@@ -14,7 +14,7 @@ app = Flask(__name__)
 
 CORS(app)
 
-PATH_TO_MODEL = os.path.join("monday_model.joblib")
+PATH_TO_MODEL = os.path.join("model.joblib")
 
 
 @app.route('/')
