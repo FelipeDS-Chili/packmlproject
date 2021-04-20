@@ -1,8 +1,6 @@
 import numpy as numpy
 import time
-from sklearn.metrics import recall_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import f1_score
+from sklearn.metrics import recall_score, precision_score, f1_score
 import os
 import pandas as pd
 
@@ -57,10 +55,12 @@ def haversine_vectorized(df,
                          end_lat="dropoff_latitude",
                          end_lon="dropoff_longitude"):
     """
-        Calculate the great circle distance between two points 
+        Calculate the great circle distance between two points
         on the earth (specified in decimal degrees).
         Vectorized version of the haversine distance for pandas df
         Computes distance in kms
+        TOMA UN DF CON ESAS COLUMNAS Y DEVUELVE UN ARRAY CON LOS RESULTADOS
+
     """
 
     lat_1_rad, lon_1_rad = np.radians(df[start_lat].astype(float)), np.radians(df[start_lon].astype(float))

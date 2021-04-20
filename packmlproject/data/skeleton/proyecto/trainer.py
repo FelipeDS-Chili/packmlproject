@@ -24,7 +24,7 @@ from sklearn.impute import KNNImputer,SimpleImputer
 
 from termcolor import colored
 from xgboost import XGBRegressor
-from utils import compute_f1, simple_time_tracker, compute_precision, get_data
+from utils import compute_f1, simple_time_tracker, compute_precision, get_data, compute_recall
 
 from scipy.stats import uniform, randint
 from xgboost import XGBClassifier
@@ -75,9 +75,11 @@ class Trainer(object):
 
         self.pipeline = None
         self.kwargs = kwargs
+        self.metrica = self.kwargs.get("metrica", 'f1')
         self.upload = self.kwargs.get("upload", True)
         self.local = kwargs.get("local", False)  # if True training is done locally
         self.smote = kwargs.get("smote", False)
+        self.estimator = self.kwargs.get("estimator", self.ESTIMATOR)
         self.mlflow = kwargs.get("mlflow", False)
         self.tag = kwargs.get("tag_description", "nada")
         self.experiment_name = kwargs.get("experiment_name", self.EXPERIMENT_NAME)  # cf doc above
@@ -95,9 +97,12 @@ class Trainer(object):
         self.log_machine_specs()
 
 
+################################################## MATCHING ESTIMATOR MODEL ##################################################
+
 
     def get_estimator(self):
         estimator = self.kwargs.get("estimator", self.ESTIMATOR)
+
 
         if estimator == "LogisticRegression":
             model = LogisticRegression(class_weight= 'balanced')
@@ -158,6 +163,12 @@ class Trainer(object):
         model.set_params(**estimator_params)
         print(colored(model.__class__.__name__, "red"))
         return model
+
+
+
+
+################################################## DEFINE IMPUTER AND SCALER TO USE #############################################
+
 
     def get_imputer(self):
         imputer = self.kwargs.get("imputer", self.IMPUTER)
@@ -246,6 +257,10 @@ class Trainer(object):
         return scaler_use
 
 
+
+################################################## DEFINE PIPELINE ######################################################
+
+
     def set_pipeline(self):
 
         categorical_features_1 = ['category_code', 'country_code','state_code', 'founded_at','timediff_founded_series_a', 'time_diff_series_a_now'] #first use imputer /after ohe
@@ -288,6 +303,9 @@ class Trainer(object):
 
 
 
+
+################################################## MODEL TUNNING ####################################################
+
         if self.smote:
 
             smote =ADASYN(sampling_strategy = 'minority', n_neighbors= 20)
@@ -299,25 +317,117 @@ class Trainer(object):
 
         # Random search
         if self.grid_search_choice:
-            grid_search = RandomizedSearchCV(
-                self.pipeline,
-                param_distributions ={
 
-                "model_use__learning_rate": uniform(0,1),
-               "model_use__gamma" : uniform(0,2),
-               "model_use__max_depth": randint(1,15),
-               "model_use__colsample_bytree": randint(0.1,1),
-               "model_use__subsample": [0.2, 0.4, 0.5],
-               "model_use__reg_alpha": uniform(0,1),
-               "model_use__reg_lambda": uniform(1,10),
-               "model_use__min_child_weight": randint(1,10),
-               "model_use__n_estimators": randint(1000,3000)
 
-                    },  #param depending of the model to use
-                cv=35,
-                scoring='f1',
-                n_iter = 10,
-                n_jobs = -1 )
+            if self.estimator == 'LogisticRegression':
+
+                grid_search = RandomizedSearchCV(
+                    self.pipeline,
+                    param_distributions ={
+                        "model_use__penalty": ['l1', 'l2'],
+                        "model_use__C" : randint(0,5),
+                        "model_use__class_weight": [None,'balanced'],
+                        "model_use__solver": ['newton-cg', 'liblinear', 'sag' ],
+                        "model_use__tol": uniform(0.0005, 0.0009),
+
+                        },  #param depending of the model to use
+                    cv=35,
+                    scoring= self.metrica,
+                    n_iter = 10,
+                    n_jobs = -1 )
+
+
+            if self.estimator == 'SVC':
+
+                grid_search = RandomizedSearchCV(
+                    self.pipeline,
+                    param_distributions ={
+                        "model_use__C": uniform(1, 20),
+                        "model_use__kernel" : ['linear', 'poly', 'sigmoid', 'rbf'],
+                        "model_use__gamma": ['scale'],
+                        "model_use__coef0": uniform(0,3),
+                        "model_use__tol": uniform(0.001, 0.004),
+                        "model_use__degree": [3],
+                        #    "model_use__maxi_iter": [-1],
+                        'model_use__class_weight' : ['balanced']
+
+                        },  #param depending of the model to use
+                    cv=35,
+                    scoring= self.metrica,
+                    n_iter = 10,
+                    n_jobs = -1 )
+
+
+
+
+            if self.estimator == 'DecisionTree':
+
+                grid_search = RandomizedSearchCV(
+                    self.pipeline,
+                    param_distributions ={
+                            "model_use__criterion": ['gini','entropy'],
+                            "model_use__splitter" : ['best', 'random'],
+                            "model_use__min_samples_split": randint(2,10),
+                            "model_use__min_samples_leaf": [1,2,3],
+                            "model_use__max_features": ['auto', 'sqrt', 'log2'],
+                            'model_use__class_weight' : ['balanced'],
+                            "model_use__ccp_alpha" : uniform(0,10)
+
+                        },  #param depending of the model to use
+                    cv=35,
+                    scoring= self.metrica,
+                    n_iter = 10,
+                    n_jobs = -1 )
+
+
+
+
+            if self.estimator == 'SGDC':
+
+                grid_search = RandomizedSearchCV(
+                    self.pipeline,
+                    param_distributions ={
+                            "model_use__loss": ['log', 'huber'],
+                            "model_use__penalty" : ['l1', 'l2'],
+                            "model_use__alpha": uniform(0.00001, 0.0004),
+                            "model_use__learning_rate": ['constant', 'optimal', 'invscaling', 'adaptative'], #optimal sino
+                            "model_use__tol": uniform(0.005, 0.009),
+                            "model_use__validation_fraction": [0.3],
+                            "model_use__early_stopping": [True],
+                            'model_use__class_weight' : ['balanced']
+
+                        },  #param depending of the model to use
+                    cv=35,
+                    scoring= self.metrica,
+                    n_iter = 10,
+                    n_jobs = -1 )
+
+
+
+
+            if self.estimator == 'xgboost':
+
+                grid_search = RandomizedSearchCV(
+                    self.pipeline,
+                    param_distributions ={
+                    'model_use__objective':['binary:logistic'],
+                    "model_use__learning_rate": uniform(0,1),
+                   "model_use__gamma" : uniform(0,2),
+                   "model_use__max_depth": randint(1,15),
+                   "model_use__colsample_bytree": randint(0.1,1),
+                   "model_use__subsample": [0.2, 0.4, 0.5],
+                   "model_use__reg_alpha": uniform(0,1),
+                   "model_use__reg_lambda": uniform(1,10),
+                   "model_use__min_child_weight": randint(1,10),
+                   "model_use__n_estimators": randint(1000,3000)
+
+                        },  #param depending of the model to use
+                    cv=35,
+                    scoring= self.metrica,
+                    n_iter = 10,
+                    n_jobs = -1 )
+
+
 
 
             grid_search.fit(self.X_train, self.y_train)
@@ -325,8 +435,12 @@ class Trainer(object):
             self.pipeline = grid_search.best_estimator_
             self.grid_params = grid_search.get_params
 
-            self.set_tag('model_used', self.pipeline)
+            if self.mlflow:
+                self.set_tag('model_used', self.pipeline)
 
+
+
+################################################## TRAIN AND SCORE MODEL ############################################
 
 
     @simple_time_tracker
@@ -342,6 +456,8 @@ class Trainer(object):
     def evaluate(self):
         f1_train = self.compute_f1(self.X_train, self.y_train)
         precision_train = self.compute_precision(self.X_train, self.y_train)
+        recall_train = self.compute_recall(self.X_train, self.y_train)
+
         if self.mlflow:
             self.mlflow_log_metric("f1score_train", f1_train)
             self.mlflow_log_metric("precision_train", precision_train)
@@ -349,13 +465,17 @@ class Trainer(object):
         if self.split:
             f1_val = self.compute_f1(self.X_val, self.y_val, show=True)
             precision_val = self.compute_precision(self.X_val, self.y_val, show=True)
+            recall_val = self.compute_recall(self.X_val, self.y_val, show=True)
+
             self.mlflow_log_metric("f1score_val", f1_val)
             self.mlflow_log_metric("precision_val", precision_val)
             print(colored("f1 train: {} || f1 val: {}".format(f1_train, f1_val), "yellow"))
             print(colored("precision train: {} || precision val: {}".format(precision_train, precision_val), "yellow"))
+            print(colored("recall train: {} || recall val: {}".format(recall_train, recall_val), "yellow"))
         else:
             print(colored("f1 train: {}".format(f1_train), "blue"))
             print(colored("precision train: {}".format(precision_train), "blue"))
+            print(colored("recall train: {}".format(recall_train), "blue"))
 
 
     def compute_f1(self, X_test, y_test, show=False):
@@ -380,6 +500,22 @@ class Trainer(object):
             print(colored(res.sample(self.y_val.shape[0]), "blue")) #Aumentar tamaño de muestra de validacion
         precision = compute_precision(y_pred, y_test)
         return round(precision, 3)
+
+
+    def compute_recall(self, X_test, y_test, show=False):
+        if self.pipeline is None:
+            raise ("Cannot evaluate an empty pipeline")
+        y_pred = self.pipeline.predict(X_test)
+        if show:
+            res = pd.DataFrame(y_test)
+            res["pred"] = y_pred
+            print(colored(res.sample(self.y_val.shape[0]), "blue")) #Aumentar tamaño de muestra de validacion
+        recall = compute_recall(y_pred, y_test)
+        return round(recall, 3)
+
+
+
+###################################### SAVE THE MODEL + DOWNCAST DATA ######################################
 
 
 
@@ -429,7 +565,8 @@ class Trainer(object):
         blob.upload_from_filename('model.joblib')
 
 
-    ### MLFlow methods
+################################ UPLOAD MODEL PARAMS AND LOGS TO MLFLOW  ####################################################
+
     @memoized_property
     def mlflow_client(self):
         mlflow.set_tracking_uri(MLFLOW_URI)
@@ -478,7 +615,9 @@ class Trainer(object):
         self.mlflow_log_param("cpus", cpus)
 
 
- ################------------ RUN THE CODE ------#####################################################################
+
+################################################################ RUN CODE ################################################################
+
 
 
 if __name__ == "__main__":
@@ -512,7 +651,7 @@ if __name__ == "__main__":
                 estimator_params ={ 'weights' :[6, 2, 5, 3, 4]},
                 local=False, split=True,  mlflow = True, experiment_name=experiment,
                 imputer= 'SimpleImputer', imputer_params = {'strategy': 'most_frequent'},
-                grid_search_choice= False, smote=True, upload=True) #agregar
+                grid_search_choice= False, metrica = 'f1', smote=True, upload=True) #agregar
 
 
 
