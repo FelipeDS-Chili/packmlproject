@@ -22,4 +22,4 @@ def get_lines(data):
 
 if __name__ == "__main__":
     #df = read_data()
-    main()
+

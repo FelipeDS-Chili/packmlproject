@@ -7,7 +7,8 @@
 
 
 # path of the file to upload to gcp (the path of the file should be absolute or should match the directory where the make command is run)
-LOCAL_PATH="/Users/felipeinostroza/code/FelipeDS-Chili/TaxiFareModel/TaxiFareModel/data/train_1k.csv"
+# cambiar train_1k.csv por data verdadera
+LOCAL_PATH="/Users/felipeinostroza/code/FelipeDS-Chili/proj/proj/data/train_1k.csv"
 
 # bucket directory in which to store the uploaded file (we choose to name this data as a convention)
 BUCKET_FOLDER=data
@@ -36,7 +37,7 @@ PACKAGE_NAME=proj
 FILENAME=trainer
 
 
-JOB_NAME=taxi_fare_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
+JOB_NAME=proj_training_pipeline_$(shell date +'%Y%m%d_%H%M%S')
 
 #crear project en gcp storage
 set_project:
@@ -58,7 +59,7 @@ run_locally:
 run_fast:
 	@python -m api.fast
 
-	
+
 
 #comando para entrenar modelo en GCP AI
 gcp_submit_training:

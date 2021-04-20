@@ -1,7 +1,7 @@
 FROM python:3.8.6-buster
-COPY TaxiFareModel /TaxiFareModel
+COPY proj /proj
 COPY api /api
-COPY model_taxi.joblib /model_taxi.joblib
+COPY model.joblib /model.joblib
 COPY requirements.txt /requirements.txt
 
 RUN pip install --upgrade pip
