@@ -85,7 +85,7 @@ if __name__ == '__main__':
     search_replace(pkgn, 'proyecto/gcp.py', 'proyecto', pkg_name)
     search_replace(pkgn, 'proyecto/trainer.py', 'proyecto', pkg_name)
     search_replace(pkgn, 'proyecto/gcp.py', 'proyecto', pkg_name)
-    search_replace(pkgn, 'proyecto/encoder.py', 'proyecto', pkg_name)
+    search_replace(pkgn, 'proyecto/encoders.py', 'proyecto', pkg_name)
     search_replace(pkgn, 'api/fast.py', 'proyecto', pkg_name)
     search_replace(pkgn, 'tests/data_test.py', 'proyecto', pkg_name)
 
