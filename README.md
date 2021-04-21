@@ -2,7 +2,7 @@
 
 Copyright (C)  Le Wagon Staff
 
-This is a full machine learning project generator, based on packgenlite from Le Wagon, however contains some modifications in MLOps code and aditional files. It provides python libs for projects and mainly `packmlproject` script.
+This is a full machine learning project generator, based on packgenlite from Le Wagon. It contains some modifications in MLOps code and aditional files ready to use in your next project. It provides python libs for projects and mainly `packmlproject` script.
 
 
 
@@ -21,7 +21,7 @@ Use `packmlproject` to create a new python package:
 packmlproject new_project
 ```
 
-Check that the package has been created:
+The tree of the new package created is:
 
 ```bash
 cd new_project
