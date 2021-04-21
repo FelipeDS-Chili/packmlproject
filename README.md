@@ -12,34 +12,48 @@ and mainly `packmlproject` script.
 pip install git+https://github.com/FelipeDS-Chili/packmlproject.git
 ```
 
-## Create a `newpkgname` package
+## Create a `new_project` package
 
 Use `packmlproject` to create a new python package:
 
 ```bash
-packmlproject newpkgname
+packmlproject new_project
 ```
 
 Check that the package has been created:
 
 ```bash
-cd newpkgname
+cd new_project
 tree
 .
 ├── MANIFEST.in
+├── Dockerfile
+├── Procfile
 ├── Makefile
 ├── README.md
-├── newpkgname
+├── new_project
 │   ├── __init__.py
-│   └── data
+│   ├── data
+│   ├── data.py
+│   ├── encoders.py
+│   ├── gcp.py
+│   ├── trainer.py
+│   └── utils.py
+├── api
+│   ├── __init__.py
+│   ├── app.py
+│   ├── app_streamlit.py
+│   └── fast.py
 ├── notebooks
 ├── raw_data
 ├── requirements.txt
 ├── scripts
-│   └── newpkgname-run
+│   └── new_project-run
 ├── setup.py
+├── setup.sh
 └── tests
-    └── __init__.py
+    ├── __init__.py
+    └── data_test.py
 
-6 directories, 8 files
+6 directories, 21 files
 ```
