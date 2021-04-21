@@ -111,7 +111,3 @@ if __name__ == '__main__':
     call(["git", "tag", "-a", "0.4", "-m", "0.4"], cwd=pkg_name)
 
 
-
-    print( colored('############## 🔥🔥Lets make your own ML project 🔥🔥 ##############', 'green' ))
-    print( colored('############## Developed by Felipe Inostroza 🖥 ##############' , 'yellow' ))
-    print( colored('############## Base on LeWagon package ##############', 'blue' ))

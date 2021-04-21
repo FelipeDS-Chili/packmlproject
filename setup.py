@@ -30,7 +30,3 @@ setup(name='packmlproject',
       include_package_data=True,
       scripts=['scripts/packmlproject'],
       zip_safe=False)
-
-print( colored('############## 🔥🔥Lets make your own ML project 🔥🔥 ##############', 'green' ))
-print( colored('############## Developed by Felipe Inostroza 🖥 ##############' , 'yellow' ))
-print( colored('############## Base on LeWagon package ##############', 'blue' ))
