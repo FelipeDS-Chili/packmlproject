@@ -1,5 +1,7 @@
 # packmlproject - Python package builder
 
+# Copyright  Le Wagon Staff
+
 This package is a meta-package that provide python libs for projects
 and mainly `packmlproject` script.
 
