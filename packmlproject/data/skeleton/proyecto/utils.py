@@ -4,7 +4,7 @@ from sklearn.metrics import recall_score, precision_score, f1_score
 import os
 import pandas as pd
 
-
+######################################## METRICS #########################################################
 
 def compute_precision_macro(y_pred, y_true):
 
@@ -49,6 +49,11 @@ def compute_rmse(y_pred, y_true):
 
 
 
+
+######################################## DISTANCE FUNCTIONS #########################################################
+
+
+
 def haversine_vectorized(df,
                          start_lat="pickup_latitude",
                          start_lon="pickup_longitude",
@@ -86,16 +91,47 @@ def minkowski_distance(df, p,
 
 
 
+#####################################  OPTIMIZATION INTEGERS AND FLOATS (DOWNCAST) #####################################
+
+
+def df_optimized(df, verbose=False, **kwargs):
+    """
+    Reduces size of dataframe by downcasting numeircal columns
+    :param df: input dataframe
+    :param verbose: print size reduction if set to True
+    :param kwargs:
+    :return: df optimized
+    """
+    in_size = df.memory_usage(index=True).sum()
+    # Optimized size here
+    for type in ["float", "integer"]:
+        l_cols = list(df.select_dtypes(include=type))
+        for col in l_cols:
+            df[col] = pd.to_numeric(df[col], downcast=type)
+            if type == "float":
+                df[col] = pd.to_numeric(df[col], downcast="integer")
+    out_size = df.memory_usage(index=True).sum()
+    ratio = (1 - round(out_size / in_size, 2)) * 100
+    GB = out_size / 1000000000
+    if verbose:
+        print("optimized size by {} % | {} GB".format(ratio, GB))
+    return df
+
+
+
+
+
+
 
 if __name__ == "__main__":
-    companies = get_data()
-    print(companies.head(10))
-    print(companies.shape)
-    print(companies.columns)
-    print(companies.info())
-    print(companies.state_code.value_counts())
-    print(companies.country_code.value_counts())
-    companies.to_csv("companies_test.csv")
+    pass
+
+
+
+
+
+
+
 
 
 

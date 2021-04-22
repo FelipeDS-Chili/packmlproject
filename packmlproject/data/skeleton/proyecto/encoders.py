@@ -4,10 +4,17 @@ import pandas as pd
 import numpy as np
 
 from proyecto.data import get_data, clean_df, DIST_ARGS
-from proyecto.utils import haversine_vectorized, minkowski_distance
+from proyecto.utils import haversine_vectorized, minkowski_distance, df_optimized
 import pygeohash as gh
 
-# Scalers para FECHA--> transformación a seno y coseno (CosSinMesHoraMinuto, CosSinDiaSemana)
+
+
+
+
+######################################## DATE ENCODERS #########################################################
+
+
+# Scalers para FECHA (fecha + hora +UTC)--> transformación a seno y coseno (CosSinMesHoraMinuto, CosSinDiaSemana)
 
 class CosSinMesHoraMinuto(TransformerMixin,BaseEstimator):
 
@@ -41,6 +48,10 @@ class CosSinMesHoraMinuto(TransformerMixin,BaseEstimator):
 
 class CosSinDiaSemana(TransformerMixin,BaseEstimator):
 
+    '''
+    Take a column with days of week and return a sin and cos of that day.
+    '''
+
     def __init__(self):
         pass
 
@@ -65,12 +76,12 @@ class CosSinDiaSemana(TransformerMixin,BaseEstimator):
 
 
 
-# DISTANCIA
+######################################## DISTANCE ENCODERS #########################################################
 
 
 
 class TimeFeaturesEncoder(BaseEstimator, TransformerMixin):
-    # class TimeFeaturesEncoder(CustomEncoder):
+
 
     def __init__(self, time_column, time_zone_name='America/New_York'):
         self.time_column = time_column
@@ -174,6 +185,50 @@ class Direction(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         return self
+
+
+
+######################################## OPTIMIZER ENCODERS (DOWNCAST OF DATASET) #########################################################
+
+
+class OptimizeDf(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+
+    def transform(self, X, y=None):
+
+        X_ = pd.DataFrame(X)
+
+        return np.array(df_optimized(X_))
+
+
+    def fit(self, X, y=None):
+        return self
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

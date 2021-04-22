@@ -34,6 +34,8 @@ from imblearn.pipeline import Pipeline as Pipeline_imb
 
 from google.cloud import storage
 
+from proyecto.encoders import OptimizeDf
+
 
 
 MLFLOW_URI = "https://mlflow.server.co/"
@@ -138,6 +140,8 @@ class Trainer(object):
 
         elif estimator =='voting':
 
+            #Use your models gotten
+
             model_1 = SGDClassifier()
             model_2 = SGDClassifier()
             model_3 = SGDClassifier()
@@ -153,9 +157,6 @@ class Trainer(object):
                                                 ('model5a', model_5),
                                                 ('model6a', model_6)]
                                 ,voting='soft')
-
-
-
 
 
         estimator_params = self.kwargs.get("estimator_params", {}) #Dictionary
@@ -263,6 +264,10 @@ class Trainer(object):
 
     def set_pipeline(self):
 
+
+        ######################## TO EDIT ##########################
+
+
         categorical_features_1 = ['category_code', 'country_code','state_code', 'founded_at','timediff_founded_series_a', 'time_diff_series_a_now'] #first use imputer /after ohe
         categorical_features_2 = ['participants_a', 'raised_amount_usd_a', 'rounds_before_a', 'mean_comp_worked_before',  'founder_count', 'degree_count'] # impute first, after ordinals
         booleans_features = ['graduate', 'undergrad','professional', 'MBA_bool', 'cs_bool', 'phd_bool', 'top_20_bool', 'mean_comp_founded_before', 'female_ratio'] # ordinals/binaries
@@ -293,12 +298,18 @@ class Trainer(object):
 
 
 
+        ######################## DON'T EDIT OPTIMEDF : DOWNCAST YOUR DF ##########################
+
+
         #Columntransformer keeping order
         preprocessor = ColumnTransformer(feateng_blocks, remainder= 'passthrough')
 
-        #final_pipeline
-        self.pipeline = Pipeline(steps = [('preprocessing', preprocessor),
-                            ('model_use', self.get_estimator())] )
+        #final_pipeline BEFORE tunning
+        self.pipeline = Pipeline(steps = [
+                                            ('preprocessing', preprocessor),
+                                            ('optimize', OptimizeDf()),
+                                            ('model_use', self.get_estimator())
+                                                                                ] )
 
 
 
@@ -306,11 +317,14 @@ class Trainer(object):
 
 ################################################## MODEL TUNNING ####################################################
 
+        # DATA AUGMENTATION ALGORITHM (ADASYN OR SMOTE)
+
         if self.smote:
 
             smote =ADASYN(sampling_strategy = 'minority', n_neighbors= 20)
             self.pipeline =Pipeline_imb([
                 ('prep',preprocessor),
+                ('optimize', OptimizeDf()),
                 ('smote', smote),
                 ('model_use', self.get_estimator())])
 
@@ -337,7 +351,7 @@ class Trainer(object):
                     n_jobs = -1 )
 
 
-            if self.estimator == 'SVC':
+            elif self.estimator == 'SVC':
 
                 grid_search = RandomizedSearchCV(
                     self.pipeline,
@@ -360,7 +374,7 @@ class Trainer(object):
 
 
 
-            if self.estimator == 'DecisionTree':
+            elif self.estimator == 'DecisionTree':
 
                 grid_search = RandomizedSearchCV(
                     self.pipeline,
@@ -382,7 +396,7 @@ class Trainer(object):
 
 
 
-            if self.estimator == 'SGDC':
+            elif self.estimator == 'SGDC':
 
                 grid_search = RandomizedSearchCV(
                     self.pipeline,
@@ -405,7 +419,7 @@ class Trainer(object):
 
 
 
-            if self.estimator == 'xgboost':
+            elif self.estimator == 'xgboost':
 
                 grid_search = RandomizedSearchCV(
                     self.pipeline,
@@ -428,15 +442,14 @@ class Trainer(object):
                     n_jobs = -1 )
 
 
-
-
             grid_search.fit(self.X_train, self.y_train)
 
             self.pipeline = grid_search.best_estimator_
             self.grid_params = grid_search.get_params
 
-            if self.mlflow:
-                self.set_tag('model_used', self.pipeline)
+
+        if self.mlflow:
+            self.set_tag('model_used', self.pipeline)
 
 
 
@@ -515,7 +528,7 @@ class Trainer(object):
 
 
 
-###################################### SAVE THE MODEL + DOWNCAST DATA ######################################
+###################################### SAVE THE MODEL  + GCP upload model ######################################
 
 
 
@@ -529,29 +542,6 @@ class Trainer(object):
             self.upload_model_to_gcp()
             print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
 
-    #  optimization of integers and floats (downcast)
-    def df_optimized(self, df, verbose=True, **kwargs):
-        """
-        Reduces size of dataframe by downcasting numeircal columns
-        :param df: input dataframe
-        :param verbose: print size reduction if set to True
-        :param kwargs:
-        :return: df optimized
-        """
-        in_size = df.memory_usage(index=True).sum()
-        # Optimized size here
-        for type in ["float", "integer"]:
-            l_cols = list(df.select_dtypes(include=type))
-            for col in l_cols:
-                df[col] = pd.to_numeric(df[col], downcast=type)
-                if type == "float":
-                    df[col] = pd.to_numeric(df[col], downcast="integer")
-        out_size = df.memory_usage(index=True).sum()
-        ratio = (1 - round(out_size / in_size, 2)) * 100
-        GB = out_size / 1000000000
-        if verbose:
-            print("optimized size by {} % | {} GB".format(ratio, GB))
-        return df
 
     # method to upload the model to gcp
     def upload_model_to_gcp(self):
@@ -623,10 +613,10 @@ class Trainer(object):
 if __name__ == "__main__":
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
-    # Get and clean data
+    # Experiment name for MLflow
     experiment = "proyecto"
 
-    #Change the reference HERE !!!
+    #Change the data
 
     df = get_data()
     y_train = df["target"]
@@ -647,9 +637,9 @@ if __name__ == "__main__":
                                 # 'RandomForestClassifier'
                                  ]:
 
-            params = dict(tag_description=f'[MODEL FINAL]{estimator_iter}][{year}][{reference}]' ,estimator = estimator_iter,
+            params = dict(tag_description=f'[MODEL FINAL]{estimator_iter}]' ,estimator = estimator_iter,
                 estimator_params ={ 'weights' :[6, 2, 5, 3, 4]},
-                local=False, split=True,  mlflow = True, experiment_name=experiment,
+                local=False, split=True,  mlflow = True, experiment_name = experiment,
                 imputer= 'SimpleImputer', imputer_params = {'strategy': 'most_frequent'},
                 grid_search_choice= False, metrica = 'f1', smote=True, upload=True) #agregar
 
