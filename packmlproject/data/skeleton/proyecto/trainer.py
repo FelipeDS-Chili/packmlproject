@@ -34,6 +34,7 @@ from imblearn.pipeline import Pipeline as Pipeline_imb
 
 from google.cloud import storage
 
+from atraso_vuelos.utils import df_optimized
 from proyecto.encoders import OptimizeDf
 
 
@@ -619,6 +620,9 @@ if __name__ == "__main__":
     #Change the data
 
     df = get_data()
+
+    df = df_optimized(df) #DOWNCAST the DF
+
     y_train = df["target"]
     X_train = df.drop(columns =['target']) #Change when we have categorical var
 
